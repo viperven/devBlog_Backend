@@ -32,7 +32,7 @@ app.use(
 
 //all Routes
 
-// app.use("/auth", require("./src/routes/authRoutes"));
+app.use("/auth", require("./src/routes/authRoutes"));
 // app.use("/profile", require("./src/routes/profileRoutes"));
 // app.use("/request", require("./src/routes/connectionRoutes"));
 // app.use("/user", require("./src/routes/userRotutes"));
