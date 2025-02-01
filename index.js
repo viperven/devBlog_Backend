@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 
 const connectDB = require("./src/config/db");
-const errorHandler = require("./src/middleware.js/errorHandler");
+const errorHandler = require("./src/middlewares/errorHandler");
 
 app.use(
   cors({
@@ -33,7 +33,7 @@ app.use(
 //all Routes
 
 app.use("/auth", require("./src/routes/authRoutes"));
-// app.use("/profile", require("./src/routes/profileRoutes"));
+app.use("/post", require("./src/routes/postRoute"));
 // app.use("/request", require("./src/routes/connectionRoutes"));
 // app.use("/user", require("./src/routes/userRotutes"));
 // app.use("/message", require("./src/routes/messageRoute"));

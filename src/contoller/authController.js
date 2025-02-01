@@ -100,10 +100,6 @@ const register = async (req, res, next) => {
   }
 };
 
-//check users exists
-//match credentials
-//return json web token
-
 const login = async (req, res, next) => {
   try {
     validateLogin(req);
