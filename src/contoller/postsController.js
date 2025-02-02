@@ -121,8 +121,8 @@ const fetchAllPosts = async (req, res, next) => {
   try {
     let { pageNumber, pageSize } = req.query;
 
-    pageNumber = parseInt(pageNumber) || 1; // Default page to 1
-    pageSize = parseInt(pageSize) || 10; // Default page size to 10
+    pageNumber = parseInt(pageNumber) || 1;
+    pageSize = parseInt(pageSize) || 10;
 
     if (pageNumber < 1) pageNumber = 1;
     if (pageSize < 1) pageSize = 10;

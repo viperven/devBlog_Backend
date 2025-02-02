@@ -34,9 +34,7 @@ app.use(
 
 app.use("/auth", require("./src/routes/authRoutes"));
 app.use("/post", require("./src/routes/postRoute"));
-// app.use("/request", require("./src/routes/connectionRoutes"));
-// app.use("/user", require("./src/routes/userRotutes"));
-// app.use("/message", require("./src/routes/messageRoute"));
+app.use("/acitivity", require("./src/routes/commentRoute"));
 
 //first connect to db then start listening to api calls
 connectDB()
