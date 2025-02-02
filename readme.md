@@ -3,5 +3,5 @@ fetchallposts [pagination]
 
 //comments
 /commentonpost
-/like on comments
+/like on post comments
 /like on posts

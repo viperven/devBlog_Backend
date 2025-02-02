@@ -17,17 +17,11 @@ const createPost = async (req, res, next) => {
       apiData: result,
     });
   } catch (err) {
+    console.log(err?.message);
     console.log(err?.stack);
     next(err);
   }
 };
-
-//authenticate user
-//get user id from req.user
-//check if post exists
-//check if user is the owner of the post
-//update the post
-//send response
 
 const editPostById = async (req, res, next) => {
   try {
@@ -98,4 +92,64 @@ const deletePostById = async (req, res, next) => {
   }
 };
 
-module.exports = { createPost, editPostById, deletePostById };
+const fetchPostById = async (req, res, next) => {
+  try {
+    const { postId } = req.query;
+    if (!postId) {
+      return res
+        .status(400)
+        .json({ isSuccess: false, message: "Post id is required" });
+    }
+    const post = await Posts.findById(postId);
+    if (!post) {
+      return res
+        .status(404)
+        .json({ isSuccess: false, message: "Post not found" });
+    }
+    res.status(200).json({
+      isSuccess: true,
+      message: "Post fetched successfully",
+      apiData: post,
+    });
+  } catch (err) {
+    console.log(err?.stack);
+    next(err);
+  }
+};
+
+const fetchAllPosts = async (req, res, next) => {
+  try {
+    let { pageNumber, pageSize } = req.query;
+
+    pageNumber = parseInt(pageNumber) || 1; // Default page to 1
+    pageSize = parseInt(pageSize) || 10; // Default page size to 10
+
+    if (pageNumber < 1) pageNumber = 1;
+    if (pageSize < 1) pageSize = 10;
+
+    let skipPosts = (pageNumber - 1) * pageSize;
+
+    const totalPosts = await Posts.countDocuments(); // Total post count
+    const allPosts = await Posts.find({}).skip(skipPosts).limit(pageSize);
+
+    res.status(200).json({
+      isSuccess: true,
+      message: "All posts fetched successfully",
+      totalPages: Math.ceil(totalPosts / pageSize),
+      currentPage: pageNumber,
+      pageSize,
+      totalPosts,
+      apiData: allPosts,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = {
+  createPost,
+  editPostById,
+  deletePostById,
+  fetchPostById,
+  fetchAllPosts,
+};

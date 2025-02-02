@@ -54,7 +54,6 @@ const verifyOtp = async (req, res, next) => {
     const { email, otp } = req.body;
 
     const tempUser = await TempUser.findOne({ email });
-    console.log(tempUser, "ss");
 
     if (!tempUser)
       return res.status(400).json({ message: "OTP expired, request again" });
