@@ -12,6 +12,6 @@ const {
 router.post("/:postId/comments", userAuth, commentOnPost); // Add comment on post
 router.put("/:commentId/edit", userAuth, editPostComment); // Edit a post comment
 router.post("/:postId/like", userAuth, togglePostLike); // Toggle like on post
-router.post("/:commentId/like", userAuth, toggleCommentLike); // Toggle like on comment
+router.post("/:commentId/commentlike", userAuth, toggleCommentLike); // Toggle like on comment
 
 module.exports = router;

@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Posts = require("../models/posts");
 const Activity = require("../models/activity");
 const { validatePost } = require("../validation/postsValidation");
@@ -92,30 +93,51 @@ const deletePostById = async (req, res, next) => {
   }
 };
 
+
+
 const fetchPostById = async (req, res, next) => {
   try {
     const { postId } = req.query;
     if (!postId) {
-      return res
-        .status(400)
-        .json({ isSuccess: false, message: "Post id is required" });
+      return res.status(400).json({ isSuccess: false, message: "Post id is required" });
     }
-    const post = await Posts.findById(postId);
-    if (!post) {
-      return res
-        .status(404)
-        .json({ isSuccess: false, message: "Post not found" });
+
+    const objectId = new mongoose.Types.ObjectId(postId);
+
+    // Fetching the post
+    const post = await Posts.aggregate([
+      { $match: { _id: objectId } },
+      {
+        $lookup: {
+          from: "activities", // Ensure collection name matches
+          let: { postId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$postId", "$$postId"] } } }
+          ],
+          as: "activity"
+        }
+      }
+    ]);
+
+    if (!post.length) {
+      return res.status(404).json({ isSuccess: false, message: "Post not found" });
     }
+
+    // Check activity data
+    console.log(post[0].activity); // Log the activity data to see if it is populated
+
     res.status(200).json({
       isSuccess: true,
       message: "Post fetched successfully",
-      apiData: post,
+      apiData: post[0], // Return the first post document
     });
+
   } catch (err) {
     console.log(err?.stack);
     next(err);
   }
 };
+
 
 const fetchAllPosts = async (req, res, next) => {
   try {
@@ -130,7 +152,12 @@ const fetchAllPosts = async (req, res, next) => {
     let skipPosts = (pageNumber - 1) * pageSize;
 
     const totalPosts = await Posts.countDocuments(); // Total post count
-    const allPosts = await Posts.find({}).skip(skipPosts).limit(pageSize);
+    const allPosts = await Posts.aggregate([
+      { $lookup: { from: "Activity", localField: "_id", foreignField: "postId", as: "activity" } },
+      { $skip: skipPosts },
+      { $limit: pageSize }
+    ]);
+
 
     res.status(200).json({
       isSuccess: true,

@@ -30,7 +30,6 @@ const togglePostLike = async (req, res, next) => {
       message = "Post unliked successfully";
     }
 
-    post.likes.push(_id);
     await post.save();
 
     res.status(200).json({
