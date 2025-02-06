@@ -93,8 +93,6 @@ const deletePostById = async (req, res, next) => {
   }
 };
 
-
-
 const fetchPostById = async (req, res, next) => {
   try {
     const { postId } = req.query;
@@ -138,7 +136,6 @@ const fetchPostById = async (req, res, next) => {
   }
 };
 
-
 const fetchAllPosts = async (req, res, next) => {
   try {
     let { pageNumber, pageSize } = req.query;
@@ -153,7 +150,14 @@ const fetchAllPosts = async (req, res, next) => {
 
     const totalPosts = await Posts.countDocuments(); // Total post count
     const allPosts = await Posts.aggregate([
-      { $lookup: { from: "Activity", localField: "_id", foreignField: "postId", as: "activity" } },
+      {
+        $lookup: {
+          from: "activities", // Correct collection name
+          localField: "_id",  // Post ID in the Posts collection
+          foreignField: "postId", // Matching postId in activities
+          as: "activity"
+        }
+      },
       { $skip: skipPosts },
       { $limit: pageSize }
     ]);
